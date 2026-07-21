@@ -18,10 +18,16 @@ router = APIRouter(prefix="/api/v1/import", tags=["数据导入"])
 # ── 中→英 列头映射（匹配模板列头） ──────────────────────────
 # key=模板中文列头, value=Pydantic 英文字段名
 HEADER_TRANSLATIONS = {
-    # 项目
-    '框架合同名称': 'framework_name', '签订时间': 'sign_date',
-    '合同开始时间': 'start_date', '合同结束时间': 'end_date',
+    # 项目 (全字段)
+    '框架合同名称': 'framework_name', '合同编号': 'contract_no',
+    '合同类型': 'contract_type', '业主单位': 'owner_name',
+    '联系人': 'owner_contact', '联系电话': 'owner_phone',
+    '合同金额': 'contract_amount', '预算金额': 'budget_amount',
+    '签订时间': 'sign_date', '合同开始时间': 'start_date',
+    '合同结束时间': 'end_date', '所属年度': 'contract_year',
+    '所属部门': 'department', '负责人': 'manager',
     '集团内外': 'internal_or_external', '项目类型': 'project_type',
+    '合同状态': 'status', '备注': 'remark', 'ERP项目编号': 'erp_no',
     # 订单
     '项目ID': 'project_id', '订单编号': 'order_no', '订单名称': 'order_name',
     '甲方单位': 'customer_name', '含税金额': 'amount', '不含税金额': 'non_tax_amount',
@@ -43,8 +49,11 @@ HEADER_TRANSLATIONS = {
     # 付款
     '成本流水ID': 'cost_id', '支付日期': 'payment_date',
     '支付金额': 'amount', '支付对象': 'payee', '支付凭证号': 'voucher_no',
-    # 合同
-    '合同编号': 'contract_no', '合同金额': 'amount',
+    # 合同 (全字段)
+    '供应商ID': 'supplier_id', '合同编号': 'contract_no',
+    '签订日期': 'sign_date', '开始日期': 'start_date',
+    '结束日期': 'end_date', '合同金额': 'amount',
+    '合同状态': 'status', '备注': 'remark',
     '开始日期': 'start_date', '结束日期': 'end_date',
     # 单价
     '普工单价': 'laborer_price', '技工单价': 'technician_price',
@@ -74,11 +83,24 @@ def translate_headers(row: dict) -> dict:
 
 class ProjectRow(BaseModel):
     framework_name: str = Field(..., max_length=200)
+    contract_no: Optional[str] = Field(None, max_length=100)
+    contract_type: Optional[str] = Field("框架合同", max_length=20)
+    owner_name: Optional[str] = Field(None, max_length=200)
+    owner_contact: Optional[str] = Field(None, max_length=100)
+    owner_phone: Optional[str] = Field(None, max_length=50)
+    contract_amount: Optional[float] = Field(None)
+    budget_amount: Optional[float] = Field(None)
     sign_date: Optional[str] = Field(None)
     start_date: Optional[str] = Field(None)
     end_date: Optional[str] = Field(None)
+    contract_year: Optional[int] = Field(None)
+    department: Optional[str] = Field(None, max_length=100)
+    manager: Optional[str] = Field(None, max_length=100)
     internal_or_external: str = Field("集团内", max_length=20)
     project_type: str = Field("其他", max_length=100)
+    status: Optional[str] = Field("待执行", max_length=50)
+    remark: Optional[str] = Field(None)
+    erp_no: Optional[str] = Field(None, max_length=100)
 
 
 class OrderRow(BaseModel):
@@ -137,7 +159,12 @@ class PaymentRow(BaseModel):
 class SupplierContractRow(BaseModel):
     supplier_id: int = Field(...)
     contract_no: str = Field(..., max_length=200)
-    amount: float = Field(0.0)
+    sign_date: Optional[str] = Field(None)
+    start_date: Optional[str] = Field(None)
+    end_date: Optional[str] = Field(None)
+    amount: Optional[float] = Field(0.0)
+    status: Optional[str] = Field("有效", max_length=50)
+    remark: Optional[str] = Field(None, max_length=500)
 
 
 class SupplierUnitPriceRow(BaseModel):
