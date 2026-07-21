@@ -1,0 +1,67 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+venv/
+*.egg-info/
+
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+*.spec
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test
+.pytest_cache/
+coverage/
+
+# Project
+backend/FinanceDesk_Data/*.db
+backend/FinanceDesk_Data/*.db-*
+backend/FinanceDesk_Data/*.sqlite3
+*.sqlite-journal
+*.db-bak
+backend/backend.log
+backend/static/assets/
+*.tsbuildinfo
+backend/tests/test_data/
+
+# Secrets
+.env
+uploads/
+
+# Workspace artifacts
+api-docs.md
+code-review.md
+data-model-er.md
+FinanceDesk/
+coverage/
+static/index.html
+static/assets/
+
+# Temp
+tmp/
+logs/
+*.bak
+
+# Graphify / prototypes
+graphify-out/
+prototypes/
+.graphifyignore
+
+# User weekly reports
+*.pptx
+*.ppt
+
+# Docs build artifacts
+backend/dist/

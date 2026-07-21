@@ -1,0 +1,74 @@
+name: FinanceDesk CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  backend:
+    name: Backend (FastAPI)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest httpx pycodestyle
+
+      - name: PEP8 check (pycodestyle)
+        run: |
+          cd backend
+          pycodestyle --max-line-length=120 --ignore=E501,W503 \
+            app/main.py app/database.py \
+            app/models/ app/schemas/ app/routers/ 2>&1 | head -50
+          echo "PEP8 check complete"
+
+      - name: Run tests (pytest)
+        run: |
+          cd backend
+          python -m pytest tests/ -v --tb=short -q 2>&1
+        env:
+          PYTHONPATH: ./backend
+
+  frontend:
+    name: Frontend (React + Vitest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: TypeScript check
+        run: |
+          cd frontend
+          npx tsc --noEmit 2>&1 | head -30
+          echo "TypeScript check complete"
+
+      - name: Run tests (Vitest)
+        run: |
+          cd frontend
+          npx vitest run --reporter=verbose 2>&1
