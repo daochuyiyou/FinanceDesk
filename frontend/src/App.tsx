@@ -305,9 +305,7 @@ const App: React.FC = () => {
             <Layout>
               {/* ── Sidebar ── */}
               <Sider
-                collapsible
                 collapsed={collapsed}
-                onCollapse={setCollapsed}
                 theme="light"
                 width={200}
                 collapsedWidth={56}
